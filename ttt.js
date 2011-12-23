@@ -35,23 +35,28 @@ function play(e) {
 	
 	var cell = getClickedCell(e);
 	
-	cellsArray.forEach(function evaluateAvaliability(myCell){
-		if(cell.x==myCell.x && cell.y==myCell.y){
-			alert("NO!!");
-		}
+	var cellExists=false;
+	
+	//This code could be moved to a function... dont know how yet
+	cellExists = cellsArray.some(function (myCell){
+			return myCell.x === cell.x && myCell.y === cell.y;
 	});
 	
-	cellsArray.push(cell);
-	
-	if(player==0){
-		new EmptyCircle(cell);
-		player=1;
-	}else{
-		new FilledCircle(cell);
-		player=0;
+	if(!cellExists){
+		cellsArray.push(cell);
+		
+		if(player==0){
+			new EmptyCircle(cell);
+			player=1;
+		}else{
+			new FilledCircle(cell);
+			player=0;
+		}
 	}
+
 	
 	
+
 }
 
 function getClickedCell(e){
