@@ -1,7 +1,7 @@
 function drawCanvas() {
 	canvas = document.getElementById('micanvas');
 	canvas.addEventListener("click", play, false);
-	cellsArray=new Array();
+	gameBoard=new GameBoard();
 	player=0;
 	
 	sideSize = canvas.width = canvas.height = window.innerWidth / 3;
@@ -37,26 +37,23 @@ function play(e) {
 	
 	var cellExists=false;
 	
-	//This code could be moved to a function... dont know how yet
-	cellExists = cellsArray.some(function (myCell){
-			return myCell.x === cell.x && myCell.y === cell.y;
-	});
-	
-	if(!cellExists){
-		cellsArray.push(cell);
-		
-		if(player==0){
-			new EmptyCircle(cell);
-			player=1;
-		}else{
-			new FilledCircle(cell);
-			player=0;
+	if(!gameBoard[(10*cell.x)+cell.y]){
+		gameBoard[(10*cell.x)+cell.y]=cell;
+		if (player == 0) {
+			new PlayerAFigure(cell);
+			cell.player = player = 1;
+		} else {
+			new PlayerBFigure(cell);
+			cell.player = player = 0;
 		}
+		evaluateWinner();
 	}
+}
 
-	
-	
-
+function evaluateWinner(){
+	if(gameBoard.length()>4){
+		alert("Eval winner");
+	}
 }
 
 function getClickedCell(e){
@@ -84,9 +81,22 @@ function getClickedCell(e){
 function Cell(x, y){
 	this.x=x;
 	this.y=y;
+	this.player=player;
 }
 
-function FilledCircle(cell){
+function GameBoard(){
+	this.length = function(){
+		var count = -1;
+		for (var k in this) {
+		    if (this.hasOwnProperty(k)) {
+		       ++count;
+		    }
+		}
+		return count;
+	}
+}
+
+function PlayerAFigure(cell){
 	
 	ctx.beginPath();
 	ctx.arc(cellSize/2+cell.x*cellSize,cellSize/2+cell.y*cellSize,cellSize/2,0,Math.PI+(Math.PI*3)/2,false);
@@ -94,7 +104,7 @@ function FilledCircle(cell){
 	ctx.closePath();
 	
 }
-function EmptyCircle(cell){
+function PlayerBFigure(cell){
 	
 	ctx.beginPath();
 	ctx.arc(cellSize/2+cell.x*cellSize,cellSize/2+cell.y*cellSize,cellSize/2,0,Math.PI+(Math.PI*3)/2,false);
